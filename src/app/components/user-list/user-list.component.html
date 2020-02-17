@@ -1,0 +1,6 @@
+<main>
+  <app-user-list-item *ngFor="let user of users | async  let i = index;" [user]="user" [index] = 'i'></app-user-list-item>
+</main>
+<footer>
+  <button (click)="openDialog()" mat-raised-button color='primary'>Add user</button>
+</footer>
