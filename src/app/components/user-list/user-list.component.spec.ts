@@ -1,23 +1,18 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
+import { provideMockStore, MockStore } from '@ngrx/store/testing';
+import { Store } from '@ngrx/store';
+
+import { SharedModule } from '../../shared/shared.module'
 
 import { UserListComponent } from './user-list.component';
-
-import { provideMockStore, MockStore } from '@ngrx/store/testing';
-import { userReducer } from '../../store/reducers/userReducer'
-import { Store, MemoizedSelector, StoreModule } from '@ngrx/store';
-import { State, reducers, metaReducers } from '../../store/reducers'
-import { MatButtonModule, MatCardModule } from '@angular/material'
-import { fakeUsers } from 'src/app/app.component.spec';
 import { UserListItemComponent } from '../../components/user-list/user-list-item/user-list-item.component'
+import { UserFormComponent } from '../user-form/user-form.component';
 
-import { LoadUsers, DeleteUser, DeleteUserSuccess } from '../../store/actions'
-import { state } from '../../store'
-import { MatDialogModule } from '@angular/material'
-import { EffectsModule } from '@ngrx/effects';
-import { UserEffects } from 'src/app/store/effects/user-effect.effects';
-import { HttpClientModule } from '@angular/common/http'
-// import {state} from '../../store/reducers'
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+import { State } from '../../store/reducers'
+import { fakeUsers } from 'src/app/app.component.spec';
+import { By, } from '@angular/platform-browser';
 
 describe('UserListComponent', () => {
   let component: UserListComponent;
@@ -29,28 +24,24 @@ describe('UserListComponent', () => {
     }
   };
   beforeAll(() => {
-    localStorage.clear()
     localStorage.setItem('users', JSON.stringify(fakeUsers))
+  })
 
-  })
-  afterAll(() => {
-    localStorage.clear()
-  })
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MatCardModule, MatDialogModule,
-        BrowserAnimationsModule,
-        HttpClientModule,
-        EffectsModule.forRoot([UserEffects]),
-        StoreModule.forRoot(reducers, {
-          metaReducers
-        }),
+      imports: [
+        SharedModule,
       ],
       providers: [provideMockStore({ initialState })],
-      declarations: [UserListComponent, UserListItemComponent],
+      declarations: [UserListComponent, UserListItemComponent, UserFormComponent],
+    }).overrideModule(BrowserDynamicTestingModule, {
+      set: {
+        entryComponents: [UserFormComponent],
+      }
     }).compileComponents();
 
     store = TestBed.get<Store<State>>(Store);
+    // Dispatch don`t work in tests!????
     // store.dispatch(new LoadUsers())
     store.refreshState()
     fixture = TestBed.createComponent(UserListComponent);
@@ -62,24 +53,35 @@ describe('UserListComponent', () => {
     })
     fixture.detectChanges();
   })
+  it('should have store', () => {
+    expect(fixture.debugElement.context.store).toBeTruthy()
+  })
+  it('should have main block and footer', () => {
+    expect(fixture.debugElement.children.length).toBe(2)
+    expect(fixture.debugElement.children[0].name).toBe('main')
+    expect(fixture.debugElement.children[1].name).toBe('footer')
+  })
   it('should render cards', () => {
     store.refreshState()
     fixture.detectChanges()
-    const compiled = fixture.debugElement.nativeElement
-    const mainElement = compiled.querySelector('main') as HTMLElement
-    expect(mainElement.children).toBeTruthy()
+    expect(fixture.debugElement.nativeElement.querySelectorAll('app-user-list-item').length).toBeGreaterThan(0)
   })
-  it('check if user name rendered', () => {
-    store.refreshState()
-    fixture.detectChanges()
-    const compiled = fixture.debugElement.nativeElement
-    const mainElement = compiled.querySelector('main') as HTMLElement
-    const textContent = mainElement.textContent as string
-    expect(textContent.includes(fakeUsers[0].name)).toBeTruthy()
-    expect(textContent.includes(fakeUsers[0].username)).toBeTruthy()
+  it('expect to have add user button', () => {
+    const button = fixture.debugElement.nativeElement.querySelector('footer').querySelector('button')
+    expect(button).toBeTruthy()
   })
-  it('delete user', () => {
-
+  it('should footer button open modal with form', () => {
+    const button = fixture.debugElement.nativeElement.querySelector('footer').querySelector('button')
+    button.click()
+    const modal = document.body.getElementsByClassName('cdk-overlay-container')
+    expect(modal).toBeTruthy()
+    expect(modal.length).toBe(1)
+    const form = modal[0].querySelector('form')
+    expect(form).toBeTruthy()
+    const closeButton = modal[0].querySelector('button')
+    closeButton.click()
+  })
+  it('should delete user', () => {
     const compiled = fixture.debugElement.nativeElement
     const mainElement = compiled.querySelector('main') as HTMLElement
     fixture.detectChanges()
@@ -92,6 +94,5 @@ describe('UserListComponent', () => {
     store.refreshState()
     fixture.detectChanges()
     expect(mainElement.children.length).toBe(1)
-
   })
 });

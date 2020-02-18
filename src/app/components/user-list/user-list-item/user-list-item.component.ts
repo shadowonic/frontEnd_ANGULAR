@@ -24,8 +24,6 @@ export class UserListItemComponent {
       width: '350px',
       data: { ...user, index } || null
     });
-
-
   }
 
 

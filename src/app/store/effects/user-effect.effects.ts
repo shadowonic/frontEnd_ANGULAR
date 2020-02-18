@@ -50,7 +50,8 @@ export class UserEffects {
           const savedUser = this.userService.saveUserToLocalStorage(payload.user)
           return new EditUserSuccess(savedUser)
         } catch (error) {
-          console.log(error);
+
+          console.error(error);
 
           return new EditUserFailure({ error })
         }
@@ -62,12 +63,10 @@ export class UserEffects {
       ofType(UserActionTypes.DeleteUser),
       mergeMap(async (payload: { index: number }) => {
         try {
-          console.log(22222222222 ,payload);
           this.userService.deleteUser(payload.index)
           return new DeleteUserSuccess(payload.index)
         } catch (error) {
-          console.log(error);
-
+          console.error(error);
           return new DeleteUserFailure({ error })
         }
       })

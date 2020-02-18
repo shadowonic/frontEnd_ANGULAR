@@ -1,17 +1,18 @@
 import { TestBed, async, ComponentFixture } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
+
+import { SharedModule } from './shared/shared.module'
+
 import { AppComponent } from './app.component';
+import { UserFormComponent } from './components/user-form/user-form.component';
 import { UserListComponent } from './components/user-list/user-list.component'
 import { UserListItemComponent } from './components/user-list/user-list-item/user-list-item.component'
-import { MatCardModule, MatDialogModule } from '@angular/material'
-import { EffectsModule } from '@ngrx/effects';
-import { UserEffects } from './store/effects/user-effect.effects';
-import { StoreModule } from '@ngrx/store';
-import { reducers, metaReducers } from './store/reducers';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 import { User } from '@interfaces';
-import { UserFormComponent } from './components/user-form/user-form.component';
+
+
+
 
 export const fakeUsers: User[] = [
   {
@@ -29,41 +30,42 @@ export const fakeUsers: User[] = [
     email: "Shanna@melissa.tv",
     phone: "010-692-6593 x09125",
     website: "anastasia.net",
-
   },
 ]
 
 describe('AppComponent', () => {
-  let fixture: ComponentFixture<UserFormComponent>;
-
+  let fixture: ComponentFixture<AppComponent>;
+  let component: AppComponent
+  beforeAll(() => {
+    localStorage.setItem('users', JSON.stringify(fakeUsers))
+  })
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        UserFormComponent,
-        BrowserAnimationsModule,
-        MatDialogModule,
-        HttpClientTestingModule,
+        SharedModule,
         RouterTestingModule,
-        MatCardModule,
-        EffectsModule.forRoot([UserEffects]),
-        StoreModule.forRoot(reducers, {
-          metaReducers,
-          runtimeChecks: {
-            strictStateImmutability: true,
-            strictActionImmutability: true
-          }
-        }),
       ],
-
       declarations: [
         UserFormComponent,
         AppComponent,
         UserListComponent,
         UserListItemComponent
       ],
+    }).overrideModule(BrowserDynamicTestingModule, {
+      set: {
+        entryComponents: [UserFormComponent],
+      }
     }).compileComponents();
+    fixture = TestBed.createComponent(AppComponent);
+    component = fixture.debugElement.componentInstance;
   }));
 
-
-
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  })
+  it('should have user-list component', () => {
+    const compiled = fixture.debugElement.nativeElement
+    expect(fixture.debugElement.children.length).toBe(1)
+    expect(fixture.debugElement.children[0].name).toBe('app-user-list')
+  })
 });

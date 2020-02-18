@@ -8,20 +8,14 @@ import { fakeUsers } from '../app.component.spec'
 
 describe('UserService', () => {
   beforeAll(() => {
-    localStorage.clear()
     localStorage.setItem('users', JSON.stringify(fakeUsers))
-  })
-  afterAll(() => {
-    localStorage.clear()
   })
   beforeEach(() =>
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       providers: [ApiService]
     })
-
   );
-
   it('should be created', () => {
     const service: UserService = TestBed.get(UserService);
     expect(service).toBeTruthy();
