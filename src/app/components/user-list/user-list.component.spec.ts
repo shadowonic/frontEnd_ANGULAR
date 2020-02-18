@@ -26,7 +26,9 @@ describe('UserListComponent', () => {
   beforeAll(() => {
     localStorage.setItem('users', JSON.stringify(fakeUsers))
   })
-
+afterAll(() => {
+  fixture.destroy()
+})
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [

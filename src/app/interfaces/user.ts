@@ -9,12 +9,11 @@
 //   company: UserCompany
 // }
 export type ApiUser = User & {
-  // id: number,
+  id: number,
   address: UserAdress,
   company: UserCompany
 }
 export interface User {
-  id: number
   phone: string,
   website: string,
   name: string;

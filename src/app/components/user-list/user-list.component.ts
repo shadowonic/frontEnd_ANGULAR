@@ -5,7 +5,7 @@ import { User } from '../../interfaces'
 
 import { UserActionTypes, LoadUsers } from '../../store/actions'
 
-import { State, state } from '../../store'
+import { State } from '../../store'
 import { MatDialog } from '@angular/material';
 import { UserFormComponent } from '../user-form/user-form.component';
 

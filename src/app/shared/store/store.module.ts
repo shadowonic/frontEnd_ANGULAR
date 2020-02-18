@@ -20,7 +20,7 @@ import { StoreModule as ngStoreModule } from '@ngrx/store';
         strictActionImmutability: true
       }
     }),
-    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: true }),
   ]
 })
 export class StoreModule { }

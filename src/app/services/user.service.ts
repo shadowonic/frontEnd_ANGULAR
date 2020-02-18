@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from './api.service'
-import { async } from '@angular/core/testing';
-import { User } from '../interfaces/user'
-import { from, Observable } from 'rxjs';
+import { User, ApiUser } from '../interfaces/user'
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +12,10 @@ export class UserService {
   }
   requestUsersFormApi = async (): Promise<User[]> => {
     try {
-      const users = await this.apiSevice.get<User[]>('http://jsonplaceholder.typicode.com/users').toPromise()
+      const users = (await this.apiSevice.get<ApiUser[]>('http://jsonplaceholder.typicode.com/users').toPromise()).map((user): User => {
+        const { company, address, id, ...cutUser } = user
+        return cutUser
+      })
       this.saveUserListToLocalstorage(users)
       return users
     } catch (error) {
@@ -51,6 +52,7 @@ export class UserService {
   saveUserListToLocalstorage(users: User[]) {
     try {
       if (!users || users && !users.length) {
+        // return
         localStorage.clear()
       } else {
         localStorage.setItem('users', JSON.stringify(users))

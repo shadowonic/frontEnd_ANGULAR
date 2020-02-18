@@ -20,7 +20,9 @@ describe('UserListItemComponent', () => {
   beforeAll(() => {
     localStorage.setItem('users', JSON.stringify(fakeUsers))
   })
-
+  afterAll(() => {
+    fixture.destroy()
+  })
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
@@ -51,4 +53,5 @@ describe('UserListItemComponent', () => {
     component.dialog.closeAll()
     fixture.detectChanges();
   })
+
 });

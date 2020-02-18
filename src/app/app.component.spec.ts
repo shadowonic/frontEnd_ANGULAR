@@ -16,7 +16,6 @@ import { User } from '@interfaces';
 
 export const fakeUsers: User[] = [
   {
-    id: 1,
     name: "Leanne Graham",
     username: "Bret",
     email: "Sincere@april.biz",
@@ -24,7 +23,6 @@ export const fakeUsers: User[] = [
     website: "hildegard.org",
   },
   {
-    id: 2,
     name: "Ervin Howell",
     username: "Antonette",
     email: "Shanna@melissa.tv",
@@ -38,6 +36,9 @@ describe('AppComponent', () => {
   let component: AppComponent
   beforeAll(() => {
     localStorage.setItem('users', JSON.stringify(fakeUsers))
+  })
+  afterAll(() => {
+    fixture.destroy()
   })
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -64,8 +65,8 @@ describe('AppComponent', () => {
     expect(component).toBeTruthy();
   })
   it('should have user-list component', () => {
-    const compiled = fixture.debugElement.nativeElement
     expect(fixture.debugElement.children.length).toBe(1)
     expect(fixture.debugElement.children[0].name).toBe('app-user-list')
   })
+
 });

@@ -19,7 +19,7 @@ export const userReducer = createReducer(userState,
     return { ...state, users: payload.users }
   }),
   on(editUser, (state, payload) => {
-    let newState = Array.from(state.users);
+    const newState = Array.from(state.users);
     newState[payload.user.index] = payload.user
     return { ...state, users: newState }
   }),
